@@ -1,0 +1,14 @@
+.venv/
+.git/
+.github/
+.pytest_cache/
+__pycache__/
+*.pyc
+tests/
+docs/
+*.pcap
+*.pcapng
+server.log
+dist/
+build/
+*.egg-info/

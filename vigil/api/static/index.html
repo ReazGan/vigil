@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>vigil</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="login" class="login">
+    <form id="login-form" class="login-card">
+      <div class="brand"><span class="mark"></span> vigil</div>
+      <p class="login-sub">network intrusion detection</p>
+      <label>Username
+        <input id="username" value="admin" autocomplete="username" autocapitalize="none" spellcheck="false">
+      </label>
+      <label>Password
+        <input id="password" type="password" autocomplete="current-password">
+      </label>
+      <button type="submit">Sign in</button>
+      <p id="login-error" class="login-error"></p>
+    </form>
+  </div>
+
+  <div id="app" class="app hidden">
+    <aside class="sidebar">
+      <div class="brand"><span class="mark"></span> vigil</div>
+      <nav class="nav">
+        <button class="nav-item active" data-view="dashboard">Dashboard</button>
+        <button class="nav-item" data-view="alerts">Alerts</button>
+        <button class="nav-item" data-view="traffic">Traffic Monitor</button>
+        <button class="nav-item" data-view="analysis">Analysis</button>
+        <button class="nav-item" data-view="reports">Reports</button>
+        <button class="nav-item" data-view="rules">Rules</button>
+        <button class="nav-item" data-view="system">System</button>
+        <button class="nav-item" data-view="settings">Settings</button>
+      </nav>
+      <div class="sidebar-foot">v0.1.0</div>
+    </aside>
+
+    <div class="content">
+      <header class="topbar">
+        <div class="view-title" id="view-title">Dashboard</div>
+        <div class="topbar-meta">
+          <span id="source" class="meta-pill">source</span>
+          <span class="meta-pill"><span class="dot"></span><span id="uptime">live</span></span>
+          <select id="range" class="range-select" aria-label="Time range">
+            <option value="60">Last 1 min</option>
+            <option value="300" selected>Last 5 min</option>
+            <option value="900">Last 15 min</option>
+            <option value="3600">Last 1 hour</option>
+            <option value="0">All</option>
+          </select>
+          <button id="logout" class="ghost">Sign out</button>
+        </div>
+      </header>
+
+      <main class="views">
+        <!-- Dashboard -->
+        <section class="view active" data-view="dashboard">
+          <div class="cards" id="d-cards"></div>
+          <div class="grid-2">
+            <div class="panel"><h2>Traffic</h2><div id="d-traffic" class="chart"></div>
+              <div class="legend"><span><i class="k-packets"></i>packets/s</span><span><i class="k-det"></i>detections/s</span></div>
+            </div>
+            <div class="panel"><h2>Attack types</h2><div id="d-donut" class="donut-wrap"></div></div>
+          </div>
+          <div class="grid-2">
+            <div class="panel"><h2>Recent alerts</h2><div class="table-scroll">
+              <table><thead><tr><th>Time</th><th>Type</th><th>Source</th><th>Destination</th><th>Severity</th></tr></thead>
+              <tbody id="d-events"></tbody></table></div></div>
+            <div class="panel"><h2>Engine</h2><div id="d-engine" class="engine-list"></div></div>
+          </div>
+        </section>
+
+        <!-- Alerts -->
+        <section class="view" data-view="alerts">
+          <div class="panel">
+            <div class="filterbar">
+              <select id="a-sev"><option value="">All severities</option><option>Critical</option><option>High</option><option>Medium</option><option>Low</option></select>
+              <select id="a-cat"><option value="">All types</option></select>
+              <span class="count" id="a-count"></span>
+            </div>
+            <div class="table-scroll tall">
+              <table><thead><tr><th>Time</th><th>Type</th><th>Severity</th><th>Source</th><th>Destination</th><th>Summary</th></tr></thead>
+              <tbody id="a-table"></tbody></table>
+            </div>
+          </div>
+        </section>
+
+        <!-- Traffic Monitor -->
+        <section class="view" data-view="traffic">
+          <div class="cards" id="t-cards"></div>
+          <div class="panel"><h2>Throughput</h2><div id="t-chart" class="chart tall-chart"></div>
+            <div class="legend"><span><i class="k-packets"></i>packets/s</span><span><i class="k-det"></i>detections/s</span></div></div>
+          <div class="panel"><h2>Protocols</h2><div id="t-proto" class="barlist"></div></div>
+        </section>
+
+        <!-- Analysis -->
+        <section class="view" data-view="analysis">
+          <div class="grid-2">
+            <div class="panel"><h2>Top attacking sources</h2><div id="an-sources" class="barlist"></div></div>
+            <div class="panel"><h2>Most targeted hosts</h2><div id="an-targets" class="barlist"></div></div>
+          </div>
+          <div class="panel"><h2>Attack categories</h2><div id="an-cats" class="barlist"></div></div>
+        </section>
+
+        <!-- Reports -->
+        <section class="view" data-view="reports">
+          <div class="panel">
+            <div class="filterbar">
+              <button id="r-json" class="btn">Export JSON</button>
+              <button id="r-csv" class="btn">Export CSV</button>
+              <span class="count" id="r-span"></span>
+            </div>
+            <div id="r-summary" class="report"></div>
+          </div>
+        </section>
+
+        <!-- Rules -->
+        <section class="view" data-view="rules">
+          <div class="grid-2">
+            <div class="panel"><h2>Detectors</h2><div class="table-scroll">
+              <table><thead><tr><th>Name</th><th>Category</th><th>Type</th></tr></thead><tbody id="ru-detectors"></tbody></table></div></div>
+            <div class="panel"><h2>Signature rules</h2><div class="table-scroll">
+              <table><thead><tr><th>ID</th><th>Category</th><th>Severity</th></tr></thead><tbody id="ru-signatures"></tbody></table></div></div>
+          </div>
+        </section>
+
+        <!-- System -->
+        <section class="view" data-view="system">
+          <div class="panel"><h2>Engine status</h2><div id="sy-grid" class="sysgrid"></div>
+            <div class="erow" style="margin-top:14px"><span class="k">Severity mix</span></div>
+            <div class="sevbar" id="sy-sevbar"></div>
+          </div>
+        </section>
+
+        <!-- Settings -->
+        <section class="view" data-view="settings">
+          <div class="panel"><h2>Detection thresholds</h2>
+            <p class="muted-note">Read-only. Tune with CLI flags or the config and restart the service.</p>
+            <div id="se-config" class="sysgrid"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+services:
+  vigil:
+    build: .
+    ports:
+      - "8089:8089"
+    environment:
+      # Set a password here; if empty, one is generated and printed in the logs.
+      - VIGIL_PASSWORD=${VIGIL_PASSWORD:-}
+    restart: unless-stopped
+
+  # Live-capture variant. Needs host networking and raw-socket capability to
+  # see real traffic. Run explicitly: docker compose run --rm vigil-live
+  # vigil-live:
+  #   build: .
+  #   network_mode: host
+  #   cap_add: ["NET_RAW", "NET_ADMIN"]
+  #   environment:
+  #     - VIGIL_PASSWORD=${VIGIL_PASSWORD:-}
+  #   command: ["vigil", "serve", "--iface", "eth0", "--host", "0.0.0.0", "--port", "8089"]
